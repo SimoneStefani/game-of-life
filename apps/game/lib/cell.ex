@@ -10,7 +10,7 @@ defmodule Cell do
 
   # Start a generic server process for the Cell. The process 
   # is named according to the position with a Registry as index
-  def start_link do
+  def start_link(position) do
     GenServer.start_link(__MODULE__, position, name: {
       :via, Registry, {Cell.Registry, position}
     })
@@ -96,7 +96,7 @@ defmodule Cell do
   # Count the living neighbours of a Cell
   defp do_count_neighbours(position) do
     position
-    |> neighboring_positions
+    |> neighbouring_positions
     |> keep_live
     |> length
   end

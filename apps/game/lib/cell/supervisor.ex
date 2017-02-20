@@ -29,7 +29,7 @@ defmodule Cell.Supervisor do
   def positions do
     children()
     |> Enum.map(&Cell.position/1)
-    |> Enum.map(fn {x, y} -> {x: x, y: y} end)
+    |> Enum.map(fn {x, y} -> %{x: x, y: y} end)
   end
 
 end

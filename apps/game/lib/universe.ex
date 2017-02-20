@@ -44,7 +44,7 @@ defmodule Universe do
 
   # Wait for the asynchronous ticks of the Cells
   defp wait_for_ticks(processes) do
-    map(asyncs, &Task.await/1)
+    map(processes, &Task.await/1)
   end
 
   # Build lists for Cells to be reaped and sowed
@@ -62,5 +62,5 @@ defmodule Universe do
     map(to_reap, &Cell.reap/1)
     map(to_sow,  &Cell.sow/1)
   end
-  
+
 end
