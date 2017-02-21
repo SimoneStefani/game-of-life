@@ -27,9 +27,14 @@ defmodule Cell.Supervisor do
 
   # Return the positions {x: a, y: b} of the children processes
   def positions do
-    children()
+    coord = children()
     |> Enum.map(&Cell.position/1)
-    |> Enum.map(fn {x, y} -> %{x: x, y: y} end)
+
+    num = children()
+    |> Enum.map(&Cell.count_neighbours/1)
+  
+    Enum.zip(coord, num)
+    |> Enum.map(fn {{x, y}, n} -> %{x: x, y: y, n: n} end)
   end
 
 end

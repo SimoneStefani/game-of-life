@@ -7,7 +7,10 @@ defmodule Interface.LifeChannel do
     Cell.Supervisor.children
     |> Enum.map(&Cell.reap/1)
 
-    Pattern.diehard(20, 20)
+    # Pattern.glider(20, 20)
+    # |> Enum.map(&Cell.sow/1)
+
+    Pattern.diehard(30, 30)
     |> Enum.map(&Cell.sow/1)
 
     {:ok, %{positions: Cell.Supervisor.positions}, socket}

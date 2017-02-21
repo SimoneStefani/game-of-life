@@ -58,8 +58,17 @@ export default {
 
     render (positions) {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-      positions.forEach(({x, y}) => {
+      positions.forEach(({x, y, n}) => {
           this.context.fillRect(x * this.scale, y * this.scale, this.scale, this.scale)
+          if (n == 0) {
+            this.context.fillStyle = 'rgb(32, 80, 129)'
+          } else if (n == 1) {
+            this.context.fillStyle = 'rgb(255, 217, 102)'
+          } else if (n == 2) {
+            this.context.fillStyle = 'rgb(218, 89, 97)'
+          } else {
+            this.context.fillStyle = 'rgb(111, 168, 220)'
+          }
       })
       this.active = positions.length
     },
@@ -74,6 +83,7 @@ export default {
     channel.join()
         .receive("ok", cells => {
             this.render(cells.positions);
+            console.log(cells)
             this.simulate(channel)
           })
         .receive("error", resp => console.error);
