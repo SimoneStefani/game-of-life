@@ -1,8 +1,9 @@
 <template>
   <div class="my-app" id="pew" style="text-align: center">
-    <h1>Game of Life Elixir</h1>
-    <h4>{{ active }} cells are alive</h4>
+    <h1>Conway's Game of Life</h1>
+    <h4>{{ active }} cells are alive | <i class="fa fa-circle" aria-hidden="true" v-bind:style="{ color: colour }"></i> {{ state }}</h4>
     <canvas id="canvas"></canvas>
+    Press <kbd>SPACEBAR</kbd> to start and pause, <kbd>R</kbd> to reset.
   </div>
 </template>
 
@@ -20,15 +21,24 @@ export default {
       interval: 100,
       simulating: false,
       active: 0,
-      channel: null
+      channel: null,
+      state: 'STOP',
+      colour: 'rgb(218, 89, 97)'
     }
   },
 
   created () {
     window.addEventListener('keydown', (e) => {
       if ((e.keyCode || e.which) == 32) {
-        this.toggle()
+        if (this.active == 0) {
+          this.simulating = false
+          this.setupSocket()
+          this.simulating = true
+        } else {
+          this.toggle()
+        }
       } else if ((e.keyCode || e.which) == 82) {
+        this.simulating = false
         this.setupSocket()
       }
     }, true)
@@ -39,15 +49,25 @@ export default {
     this.setupSocket()
   },
 
+  computed: {
+    state () {
+      return this.simulating ? this.state = 'RUNNING' : this.state = 'STOP'
+    },
+
+    colour () {
+      return this.simulating ? this.colour = 'rgb(58, 184, 130)' : this.colour = 'rgb(218, 89, 97)'
+    }
+  },
+
   methods: {
     setupCanvas () {
       this.canvas = document.getElementById("canvas")
       this.context = this.canvas.getContext("2d")
       let ratio = this.getPixelRatio(this.context)
       this.canvas.width = document.getElementById("pew").clientWidth * ratio
-      this.canvas.height = (document.getElementById("pew").clientWidth - 30) * ratio
+      this.canvas.height = (document.getElementById("pew").clientWidth - 100) * ratio
       this.canvas.style.width = `${document.getElementById("pew").clientWidth}px`
-      this.canvas.style.height = `${document.getElementById("pew").clientWidth - 30}px`
+      this.canvas.style.height = `${document.getElementById("pew").clientWidth - 100}px`
       this.context.scale(ratio, ratio)
       this.context.fillStyle = 'rgb(111, 168, 220)'
     },
@@ -98,6 +118,9 @@ export default {
     simulate () {
       this.channel.on("tick", cells => {
         this.render(cells.positions)
+        if (this.active == 0) {
+          this.simulating = false
+        }
       })
 
 

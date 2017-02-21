@@ -8,6 +8,7 @@
     <meta name="author" content="">
 
     <title>Game of Life</title>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/components.css") %>">
   </head>
