@@ -25,7 +25,7 @@ import GameOfLife from "../components/game-of-life.vue"
 
 Vue.component('game-of-life', GameOfLife)
 
-new Vue({
+window.vm = new Vue({
   el: '#app',
   render(createElement) {
     return createElement(GameOfLife, {})

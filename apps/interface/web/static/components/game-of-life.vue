@@ -1,6 +1,6 @@
 <template>
   <div class="my-app" id="pew" style="text-align: center">
-    <h1 @click="toggle">Game of Life Elixir</h1>
+    <h1>Game of Life Elixir</h1>
     <h4>{{ active }} cells are alive</h4>
     <canvas id="canvas"></canvas>
   </div>
@@ -18,13 +18,20 @@ export default {
       context: null,
       scale: 10,
       interval: 100,
-      simulating: true,
-      active: 0
+      simulating: false,
+      active: 0,
+      channel: null
     }
   },
 
-  computed: {
-
+  created () {
+    window.addEventListener('keydown', (e) => {
+      if ((e.keyCode || e.which) == 32) {
+        this.toggle()
+      } else if ((e.keyCode || e.which) == 82) {
+        this.setupSocket()
+      }
+    }, true)
   },
 
   mounted () {
@@ -79,31 +86,32 @@ export default {
 
     socket.connect()
 
-    let channel = socket.channel("life", {});
-    channel.join()
+    this.channel = socket.channel("life", {});
+    this.channel.join()
         .receive("ok", cells => {
-            this.render(cells.positions);
-            console.log(cells)
-            this.simulate(channel)
+            // this.render(cells.positions)
+            this.simulate()
           })
         .receive("error", resp => console.error);
     },
 
-    simulate (channel) {
-      channel.on("tick", cells => {
+    simulate () {
+      this.channel.on("tick", cells => {
         this.render(cells.positions)
       })
 
-      if (this.simulating) {
-          setTimeout(function tick() {
-            channel.push("tick")
-            setTimeout(tick, 100)
-          }, 100)
-      }
+
+      setTimeout(function tick() {
+          vm.$children[0].$data.channel.push("tick");
+          if (vm.$children[0].$data.simulating) {
+              setTimeout(tick, 100);
+          }
+      }, 100)
     },
 
     toggle () {
       this.simulating = !this.simulating
+      this.simulate()
     }
   }
 }
