@@ -19,3 +19,15 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+
+import Vue from 'vue'
+import GameOfLife from "../components/game-of-life.vue"
+
+Vue.component('game-of-life', GameOfLife)
+
+new Vue({
+  el: '#app',
+  render(createElement) {
+    return createElement(GameOfLife, {})
+  }
+});
