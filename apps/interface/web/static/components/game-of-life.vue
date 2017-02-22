@@ -8,7 +8,6 @@
 </template>
 
 <script>
-
 import {Socket} from 'phoenix'
 
 export default {
@@ -22,8 +21,6 @@ export default {
       simulating: false,
       active: 0,
       channel: null,
-      state: 'STOP',
-      colour: 'rgb(218, 89, 97)'
     }
   },
 
@@ -31,15 +28,13 @@ export default {
     window.addEventListener('keydown', (e) => {
       if ((e.keyCode || e.which) == 32) {
         if (this.active == 0) {
-          this.simulating = false
-          this.setupSocket()
-          this.simulating = true
+          this.reset() 
         } else {
-          this.toggle()
+          this.simulating = !this.simulating
+          this.simulate()
         }
       } else if ((e.keyCode || e.which) == 82) {
-        this.simulating = false
-        this.setupSocket()
+        this.reset()
       }
     }, true)
   },
@@ -101,18 +96,25 @@ export default {
     },
 
     setupSocket () {
-    let socket = new Socket("/socket")
-    let playing = false
+      let socket = new Socket("/socket")
+      socket.connect()
 
-    socket.connect()
-
-    this.channel = socket.channel("life", {});
-    this.channel.join()
-        .receive("ok", cells => {
-            // this.render(cells.positions)
-            this.simulate()
+      this.channel = socket.channel("life", {});
+      this.channel.join()
+          .receive("ok", resp => {
+            console.log('joined life channel')
+            this.reset()
           })
-        .receive("error", resp => console.error);
+          .receive("error", resp => console.error)
+    },
+
+    reset () {
+      this.simulating = false
+      this.channel.push("reset")
+      this.channel.on("reset", cells => {
+        console.log('reset')
+      })
+      this.simulate()
     },
 
     simulate () {
@@ -123,18 +125,12 @@ export default {
         }
       })
 
-
       setTimeout(function tick() {
           vm.$children[0].$data.channel.push("tick");
           if (vm.$children[0].$data.simulating) {
-              setTimeout(tick, 100);
+              setTimeout(tick, 100)
           }
       }, 100)
-    },
-
-    toggle () {
-      this.simulating = !this.simulating
-      this.simulate()
     }
   }
 }
