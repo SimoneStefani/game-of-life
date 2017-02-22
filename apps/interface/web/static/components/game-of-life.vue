@@ -2,6 +2,10 @@
   <div class="my-app" id="pew" style="text-align: center">
     <h1>Conway's Game of Life</h1>
     <h4>{{ active }} cells are alive | <i class="fa fa-circle" aria-hidden="true" v-bind:style="{ color: colour }"></i> {{ state }}</h4>
+    <div id="info">
+      <div class="data">Generation: {{ generation }}</div>
+      <div class="data">Maximum number of alive cell: {{ maxAlive }}</div>
+    </div>
     <canvas id="canvas"></canvas>
     Press <kbd>SPACEBAR</kbd> to start and pause, <kbd>T</kbd> to advance the universe of one tick, <kbd>R</kbd> to reset.
   </div>
@@ -21,6 +25,8 @@ export default {
       simulating: false,
       active: 0,
       channel: null,
+      generation: 0,
+      maxAlive: 0
     }
   },
 
@@ -29,12 +35,14 @@ export default {
       if ((e.keyCode || e.which) == 32) { // SPACEBAR
         if (this.active == 0) {
           this.reset() 
+          this.maxAlive = 0
         } else {
           this.simulating = !this.simulating
           this.simulate()
         }
       } else if ((e.keyCode || e.which) == 82) { // R
         this.reset()
+        this.maxAlive = 0
       } else if ((e.keyCode || e.which) == 84 && !this.simulating) { // T
         this.simulate()
       }
@@ -95,6 +103,10 @@ export default {
           }
       })
       this.active = positions.length
+      if (positions.length > this.maxAlive) {
+        this.maxAlive = positions.length
+      } 
+      
     },
 
     setupSocket () {
@@ -104,7 +116,6 @@ export default {
       this.channel = socket.channel("life", {});
       this.channel.join()
           .receive("ok", resp => {
-            console.log('joined life channel')
             this.reset()
           })
           .receive("error", resp => console.error)
@@ -113,9 +124,8 @@ export default {
     reset () {
       this.simulating = false
       this.channel.push("reset")
-      this.channel.on("reset", cells => {
-        console.log('reset')
-      })
+      this.channel.on("reset", cells => {})
+      this.generation = 0
       this.simulate()
     },
 
@@ -129,6 +139,7 @@ export default {
 
       setTimeout(function tick() {
           vm.$children[0].$data.channel.push("tick");
+          vm.$children[0].$data.generation++
           if (vm.$children[0].$data.simulating) {
               setTimeout(tick, 100)
           }
@@ -142,5 +153,20 @@ export default {
 #canvas {
   background-color: rgb(245, 245, 245);
   border-radius: 5pt;
+}
+#info {
+  background-color: rgb(245, 245, 245);
+  border-radius: 5pt;
+  height: 40px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  justify-content: center;
+}
+
+.data {
+  width: 40%;
 }
 </style>
