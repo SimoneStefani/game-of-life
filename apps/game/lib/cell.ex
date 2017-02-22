@@ -46,6 +46,12 @@ defmodule Cell do
     GenServer.call(process, {:count_neighbours})
   end
 
+  # Return info about a Cell (number of neighbours
+  # and coordinates)
+  def info(process) do
+    GenServer.call(process, {:info})
+  end
+
   # Translate the Cell position {x, y} into the process
   # ID if the Cell is alive (avoid ghost neighbours)
   def lookup(position) do
@@ -91,6 +97,11 @@ defmodule Cell do
   # Return the number of neighbours of a Cell
   def handle_call({:count_neighbours}, _from, position) do
     {:reply, do_count_neighbours(position), position}
+  end
+
+  # Return info about the cell: {x, y, number_of_neighbours}
+  def handle_call({:info}, _from, position) do
+    {:reply, Tuple.append(position, do_count_neighbours(position)), position}
   end
 
   # Count the living neighbours of a Cell
