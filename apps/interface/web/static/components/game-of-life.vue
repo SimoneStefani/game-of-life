@@ -3,7 +3,7 @@
     <h1>Conway's Game of Life</h1>
     <h4>{{ active }} cells are alive | <i class="fa fa-circle" aria-hidden="true" v-bind:style="{ color: colour }"></i> {{ state }}</h4>
     <canvas id="canvas"></canvas>
-    Press <kbd>SPACEBAR</kbd> to start and pause, <kbd>R</kbd> to reset.
+    Press <kbd>SPACEBAR</kbd> to start and pause, <kbd>T</kbd> to advance the universe of one tick, <kbd>R</kbd> to reset.
   </div>
 </template>
 
@@ -26,15 +26,17 @@ export default {
 
   created () {
     window.addEventListener('keydown', (e) => {
-      if ((e.keyCode || e.which) == 32) {
+      if ((e.keyCode || e.which) == 32) { // SPACEBAR
         if (this.active == 0) {
           this.reset() 
         } else {
           this.simulating = !this.simulating
           this.simulate()
         }
-      } else if ((e.keyCode || e.which) == 82) {
+      } else if ((e.keyCode || e.which) == 82) { // R
         this.reset()
+      } else if ((e.keyCode || e.which) == 84 && !this.simulating) { // T
+        this.simulate()
       }
     }, true)
   },
