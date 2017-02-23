@@ -12,6 +12,7 @@
       <b><span v-bind:class="{ selected: pattern == 'diehard' }">DIEHARD</span></b> <kbd>D</kbd> | 
       <b><span v-bind:class="{ selected: pattern == 'glider' }">GLIDER</span></b> <kbd>G</kbd> |
       <b><span v-bind:class="{ selected: pattern == 'tumbler' }">TUMBLER</span></b> <kbd>U</kbd>
+      <b><span v-bind:class="{ selected: pattern == 'eight' }">FIGURE EIGHT</span></b> <kbd>E</kbd>
     </p>
   </div>
 </template>
@@ -61,6 +62,10 @@ export default {
         this.maxAlive = 0
       } else if ((e.keyCode || e.which) == 85 && !this.simulating) { // U
         this.pattern = 'tumbler'
+        this.reset()
+        this.maxAlive = 0
+      } else if ((e.keyCode || e.which) == 69 && !this.simulating) { // E
+        this.pattern = 'eight'
         this.reset()
         this.maxAlive = 0
       }

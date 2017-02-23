@@ -22,6 +22,8 @@ defmodule Interface.LifeChannel do
         Pattern.diehard(30, 30)
       "tumbler" ->
         Pattern.tumbler(30, 30)
+      "eight" ->
+        Pattern.eight(30, 30)
     end
     |> Enum.map(&Cell.sow/1)
 
