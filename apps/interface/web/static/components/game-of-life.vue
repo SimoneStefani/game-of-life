@@ -10,7 +10,9 @@
     <p>Press <kbd>SPACEBAR</kbd> to start and pause, <kbd>T</kbd> to advance the universe of one tick, <kbd>R</kbd> to reset.</p>
     <p>
       <b><span v-bind:class="{ selected: pattern == 'diehard' }">DIEHARD</span></b> <kbd>D</kbd> | 
-      <b><span v-bind:class="{ selected: pattern == 'glider' }">GLIDER</span></b> <kbd>G</kbd></p>
+      <b><span v-bind:class="{ selected: pattern == 'glider' }">GLIDER</span></b> <kbd>G</kbd> |
+      <b><span v-bind:class="{ selected: pattern == 'tumbler' }">TUMBLER</span></b> <kbd>U</kbd>
+    </p>
   </div>
 </template>
 
@@ -55,6 +57,10 @@ export default {
         this.maxAlive = 0
       } else if ((e.keyCode || e.which) == 71 && !this.simulating) { // G
         this.pattern = 'glider'
+        this.reset()
+        this.maxAlive = 0
+      } else if ((e.keyCode || e.which) == 85 && !this.simulating) { // U
+        this.pattern = 'tumbler'
         this.reset()
         this.maxAlive = 0
       }
