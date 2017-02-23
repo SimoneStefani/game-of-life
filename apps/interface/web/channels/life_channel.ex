@@ -11,11 +11,16 @@ defmodule Interface.LifeChannel do
 
   # Clear the Universe, sow a pattern of Cells and 
   # return living positions  
-  def handle_in("reset", _, socket) do
+  def handle_in("reset", %{"pattern" => pattern}, socket) do
     Cell.Supervisor.children
     |> Enum.map(&Cell.reap/1)
-    
-    Pattern.diehard(30, 30)
+
+    case pattern do
+      "glider" ->
+         Pattern.glider(30, 30)
+      "diehard" ->
+        Pattern.diehard(30, 30)
+    end
     |> Enum.map(&Cell.sow/1)
 
     broadcast!(socket, "reset", %{positions: Cell.Supervisor.positions})

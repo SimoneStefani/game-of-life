@@ -7,7 +7,10 @@
       <div class="data">Maximum number of alive cell: {{ maxAlive }}</div>
     </div>
     <canvas id="canvas"></canvas>
-    Press <kbd>SPACEBAR</kbd> to start and pause, <kbd>T</kbd> to advance the universe of one tick, <kbd>R</kbd> to reset.
+    <p>Press <kbd>SPACEBAR</kbd> to start and pause, <kbd>T</kbd> to advance the universe of one tick, <kbd>R</kbd> to reset.</p>
+    <p>
+      <b><span v-bind:class="{ selected: pattern == 'diehard' }">DIEHARD</span></b> <kbd>D</kbd> | 
+      <b><span v-bind:class="{ selected: pattern == 'glider' }">GLIDER</span></b> <kbd>G</kbd></p>
   </div>
 </template>
 
@@ -26,7 +29,8 @@ export default {
       active: 0,
       channel: null,
       generation: 0,
-      maxAlive: 0
+      maxAlive: 0,
+      pattern: 'diehard'
     }
   },
 
@@ -45,6 +49,14 @@ export default {
         this.maxAlive = 0
       } else if ((e.keyCode || e.which) == 84 && !this.simulating) { // T
         this.simulate()
+      } else if ((e.keyCode || e.which) == 68 && !this.simulating) { // D
+        this.pattern = 'diehard'
+        this.reset()
+        this.maxAlive = 0
+      } else if ((e.keyCode || e.which) == 71 && !this.simulating) { // G
+        this.pattern = 'glider'
+        this.reset()
+        this.maxAlive = 0
       }
     }, true)
   },
@@ -70,9 +82,9 @@ export default {
       this.context = this.canvas.getContext("2d")
       let ratio = this.getPixelRatio(this.context)
       this.canvas.width = document.getElementById("pew").clientWidth * ratio
-      this.canvas.height = (document.getElementById("pew").clientWidth - 100) * ratio
+      this.canvas.height = (document.getElementById("pew").clientWidth - 120) * ratio
       this.canvas.style.width = `${document.getElementById("pew").clientWidth}px`
-      this.canvas.style.height = `${document.getElementById("pew").clientWidth - 100}px`
+      this.canvas.style.height = `${document.getElementById("pew").clientWidth - 120}px`
       this.context.scale(ratio, ratio)
       this.context.fillStyle = 'rgb(111, 168, 220)'
     },
@@ -123,7 +135,7 @@ export default {
 
     reset () {
       this.simulating = false
-      this.channel.push("reset")
+      this.channel.push("reset", {pattern: this.pattern})
       this.channel.on("reset", cells => {})
       this.generation = 0
       this.simulate()
@@ -157,7 +169,7 @@ export default {
 #info {
   background-color: rgb(245, 245, 245);
   border-radius: 5pt;
-  height: 40px;
+  height: 30px;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -168,5 +180,9 @@ export default {
 
 .data {
   width: 40%;
+}
+
+.selected {
+  color: rgb(218, 89, 97);
 }
 </style>
