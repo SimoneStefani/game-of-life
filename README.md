@@ -1,6 +1,10 @@
 # Conway's Game of Life
 ### *A concurrent implementation in Elixir*
 
+## Install
+```bash
+mix deps.get; cd apps/interface/; brunch build; cd ../../; mix phx.server;
+```
 
 ### 1. Introduction
 The game of life is the best-known two-dimensional cellular automaton, invented by John H. Conway and popularised in Martin Gardner's Scientific American column starting in October 1970.
